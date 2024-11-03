@@ -45,28 +45,38 @@ def login():
     '''
 
 
+@app.route('/logout')
+def logout():
+    session.pop("logged_in", None)
+    return redirect(url_for("login"))
+
+
 @app.route('/')
+@login_required
 def home():
     return render_template('home.html')
 
 
 @app.route('/button/open', methods=['GET', 'POST'])
+@login_required
 def garage_open():
-    garage_door_remote.on()
+    garage_door.on()
     time.sleep(1)
-    garage_door_remote.off()
+    garage_door.off()
     return "Garage is opening"
 
 
 @app.route('/button/close', methods=['GET', 'POST'])
+@login_required
 def garage_close():
-    garage_door_remote.on()
+    garage_door.on()
     time.sleep(1)
-    garage_door_remote.off()
+    garage_door.off()
     return "Garage is closing"
 
 
 @app.route('/button/status', methods=['GET', 'POST'])
+@login_required
 def garage_status():
     if button.is_pressed:
         return "Garage is closed"
@@ -75,6 +85,7 @@ def garage_status():
 
 
 @app.route('/button/shutdown', methods=['POST'])
+@login_required
 def shutdown():
     shutdown_server()
     return "Server shutting down..."
@@ -91,4 +102,4 @@ if __name__ == '__main__':
     try:
         app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)
     finally:
-        garage_door_remote.close()  # Clean up GPIO on exit
+        garage_door.close()  # Clean up GPIO on exit
