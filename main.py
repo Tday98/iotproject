@@ -2,6 +2,7 @@ import sys
 from flask import Flask, render_template, request, url_for, session
 from gpiozero import Button
 from gpiozero import OutputDevice
+from functools import wraps
 import time
 
 button = Button(18, pull_up=True)
