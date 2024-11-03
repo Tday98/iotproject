@@ -1,20 +1,21 @@
+import hashlib
 import os
-import sys
+import secrets
+import signal
+import sqlite3
+import time
+from functools import wraps
+
 from flask import Flask, render_template, request, redirect, url_for, session
 from gpiozero import Button
 from gpiozero import OutputDevice
-from functools import wraps
-import signal
-import sqlite3
-import hashlib
-import time
 
 button = Button(18, pull_up=True)
 garage_door = OutputDevice(4, active_high=True, initial_value=False)
 
 PID = os.getpid()
 app = Flask(__name__)
-app.secret_key = "super_secret_key"  # Replace with a secure secret key in production
+app.secret_key = secrets.token_bytes(16)  # Replace with a secure secret key in production
 
 DATABASE = 'users.db'
 
@@ -47,8 +48,10 @@ def login():
         password = request.form['password']
         hashed = hash_password(password)
 
+        # connection to attach the database
         connection = get_db_connection()
-        user = connection.execute("SELECT * FROM users WHERE username = '%s' AND password = '%s'" % (username, hashed)).fetchone()
+        user = connection.execute(
+            "SELECT * FROM users WHERE username = '%s' AND password = '%s'" % (username, hashed)).fetchone()
         connection.close()
 
         if user:
@@ -80,6 +83,11 @@ def home():
 @app.route('/button/open', methods=['GET', 'POST'])
 @login_required
 def garage_open():
+    '''
+    Flips the relay I have hooked to my soldered garage remote to trigger the
+    RF signal to send to the garage to open/close it.
+    :return:
+    '''
     garage_door.on()
     time.sleep(1)
     garage_door.off()
@@ -89,6 +97,11 @@ def garage_open():
 @app.route('/button/close', methods=['GET', 'POST'])
 @login_required
 def garage_close():
+    '''
+    Flips the relay I have hooked to my soldered garage remote to trigger the
+    RF signal to send to the garage to open/close it.
+    :return:
+    '''
     garage_door.on()
     time.sleep(1)
     garage_door.off()
@@ -112,6 +125,10 @@ def shutdown():
 
 
 def shutdown_server():
+    '''
+    Mimics a SIGINT command from the terminal which terminates the webapp
+    also frees the GPIO pins.
+    '''
     garage_door.close()
     button.close()
     pid = os.getpid()
