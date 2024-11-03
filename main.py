@@ -1,5 +1,5 @@
 import sys
-from flask import Flask, render_template, request, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session
 from gpiozero import Button
 from gpiozero import OutputDevice
 from functools import wraps
@@ -23,7 +23,6 @@ def login_required(f):
         if not session.get("logged_in"):
             return redirect(url_for("login"))
         return f(*args, **kwargs)
-
     return decorated_function
 
 
