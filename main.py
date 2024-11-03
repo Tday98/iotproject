@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from gpiozero import Button
 from gpiozero import OutputDevice
 from functools import wraps
+import signal
 import sqlite3
 import hashlib
 import time
