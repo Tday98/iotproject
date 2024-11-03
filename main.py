@@ -3,6 +3,8 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from gpiozero import Button
 from gpiozero import OutputDevice
 from functools import wraps
+import sqlite3
+import hashlib
 import time
 
 button = Button(18, pull_up=True)
@@ -11,9 +13,17 @@ garage_door = OutputDevice(4, active_high=True, initial_value=False)
 app = Flask(__name__)
 app.secret_key = "super_secret_key"  # Replace with a secure secret key in production
 
-# Replace with actual secure credentials
-USERNAME = "admin"
-PASSWORD = "password"
+DATABASE = 'users.db'
+
+
+def get_db_connection():
+    connection = sqlite3.connect(DATABASE)
+    connection.row_factory = sqlite3.Row
+    return connection
+
+
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
 
 
 # Login required decorator
@@ -23,6 +33,7 @@ def login_required(f):
         if not session.get("logged_in"):
             return redirect(url_for("login"))
         return f(*args, **kwargs)
+
     return decorated_function
 
 
@@ -31,6 +42,11 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        hashed = hash_password(password)
+
+        connection = get_db_connection()
+        user = connection.execute('SELECT * FROM users WHERE username = ? AND password = ?', (username, hashed)).fetchone()
+
         if username == USERNAME and password == PASSWORD:
             session["logged_in"] = True
             return redirect(url_for("home"))
