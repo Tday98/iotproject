@@ -1,3 +1,4 @@
+import os
 import sys
 from flask import Flask, render_template, request, redirect, url_for, session
 from gpiozero import Button
@@ -10,6 +11,7 @@ import time
 button = Button(18, pull_up=True)
 garage_door = OutputDevice(4, active_high=True, initial_value=False)
 
+PID = os.getpid()
 app = Flask(__name__)
 app.secret_key = "super_secret_key"  # Replace with a secure secret key in production
 
@@ -111,7 +113,10 @@ def shutdown():
 def shutdown_server():
     garage_door.close()
     button.close()
-    return sys.exit()
+    pid = os.getpid()
+    assert pid == PID
+    os.kill(pid, signal.SIGINT)
+    return "OK", 200
 
 
 if __name__ == '__main__':
