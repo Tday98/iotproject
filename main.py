@@ -53,4 +53,7 @@ def shutdown_server():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    try:
+        app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)
+    finally:
+        garage_door_remote.close()  # Clean up GPIO on exit
