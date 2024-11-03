@@ -45,7 +45,7 @@ def login():
         hashed = hash_password(password)
 
         connection = get_db_connection()
-        user = connection.execute('SELECT * FROM users WHERE username = ? AND password = ?', (username, hashed)).fetchone()
+        user = connection.execute("SELECT * FROM users WHERE username = '%s' AND password = '%s'" % (username, hashed)).fetchone()
         connection.close()
 
         if user:
