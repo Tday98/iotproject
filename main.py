@@ -46,8 +46,9 @@ def login():
 
         connection = get_db_connection()
         user = connection.execute('SELECT * FROM users WHERE username = ? AND password = ?', (username, hashed)).fetchone()
+        connection.close()
 
-        if username == USERNAME and password == PASSWORD:
+        if user:
             session["logged_in"] = True
             return redirect(url_for("home"))
         else:
