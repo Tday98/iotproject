@@ -58,7 +58,7 @@ def login():
             session["logged_in"] = True
             return redirect(url_for("home"))
         else:
-            return "Invalid credentials {username} is not recognized, please try again."
+            return f"Invalid credentials {username} is not recognized, please try again."
     return '''
         <form method="post">
             <label>Username:  <input type="text" name="username"></label>
