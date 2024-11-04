@@ -21,6 +21,10 @@ DATABASE = 'users.db'
 
 
 def get_db_connection():
+    '''
+    Simple SQLite database connection
+    :return:
+    '''
     connection = sqlite3.connect(DATABASE)
     connection.row_factory = sqlite3.Row
     return connection
@@ -32,6 +36,13 @@ def hash_password(password):
 
 # Login required decorator
 def login_required(f):
+    '''
+    looked up a simple way to run a session connection
+     with Flask and found this simple code.
+    :param f:
+    :return:
+    '''
+
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not session.get("logged_in"):
@@ -43,6 +54,10 @@ def login_required(f):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    '''
+    Login function that retrieves username and password from forum that it generates from the return of itself
+    :return:
+    '''
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -51,8 +66,13 @@ def login():
         # connection to attach the database
         connection = get_db_connection()
         try:
+            '''
+            One would think a try except block would be okay here but its actually really bad
+            This actually assures a XSS attack because it removes the SQL table failure
+            '''
             user = connection.execute(
-            "SELECT * FROM users WHERE username = '%s' AND password = '%s'" % (username, hashed)).fetchone() # Not safe! can be used for SQLi
+                "SELECT * FROM users WHERE username = '%s' AND password = '%s'" % (
+                username, hashed)).fetchone()  # Not safe! can be used for SQLi
             connection.close()
         except:
             return f"Invalid credentials {username} is not recognized, please try again."
