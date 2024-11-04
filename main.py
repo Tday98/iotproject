@@ -58,11 +58,11 @@ def login():
             session["logged_in"] = True
             return redirect(url_for("home"))
         else:
-            return "Invalid credentials, please try again."
+            return "Invalid credentials {username} is not recognized, please try again."
     return '''
         <form method="post">
-            <label>Username: {{ task.content|safe }} <input type="text" name="username"></label>
-            <label>Password: {{ task.content|safe }} <input type="password" name="password"></label>
+            <label>Username:  <input type="text" name="username"></label>
+            <label>Password:  <input type="password" name="password"></label>
             <button type="submit">Login</button>
         </form>
     '''
