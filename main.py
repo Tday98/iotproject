@@ -50,14 +50,18 @@ def login():
 
         # connection to attach the database
         connection = get_db_connection()
-        user = connection.execute(
-            "SELECT * FROM users WHERE username = '%s' AND password = '%s'" % (username, hashed)).fetchone()
-        connection.close()
+        try:
+            user = connection.execute(
+            "SELECT * FROM users WHERE username = '%s' AND password = '%s'" % (username, hashed)).fetchone() # Not safe! can be used for SQLi
+            connection.close()
+        except:
+            return f"Invalid credentials {username} is not recognized, please try again."
 
         if user:
             session["logged_in"] = True
             return redirect(url_for("home"))
         else:
+            # Not safe! {username} is not sanitized and can be used for XSS
             return f"Invalid credentials {username} is not recognized, please try again."
     return '''
         <form method="post">
