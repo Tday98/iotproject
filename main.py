@@ -18,6 +18,7 @@ app = Flask(__name__)
 app.secret_key = secrets.token_bytes(16)  # Replace with a secure secret key in production
 
 DATABASE = 'users.db'
+username = ""
 
 
 def get_db_connection():
@@ -75,14 +76,14 @@ def login():
                 username, hashed)).fetchone()  # Not safe! can be used for SQLi
             connection.close()
         except:
-            return f"Invalid credentials {username} is not recognized, please try again."
+            return f"Invalid credentials {username} or password is not recognized, please try again."
 
         if user:
             session["logged_in"] = True
             return redirect(url_for("home"))
         else:
             # Not safe! {username} is not sanitized and can be used for XSS
-            return f"Invalid credentials {username} is not recognized, please try again."
+            return f"Invalid credentials {username} or password is not recognized, please try again."
     return '''
         <form method="post">
             <label>Username:  <input type="text" name="username"></label>
@@ -101,7 +102,7 @@ def logout():
 @app.route('/')
 @login_required
 def home():
-    return render_template('home.html')
+    return render_template('home.html', username=username)
 
 
 @app.route('/button/open', methods=['GET', 'POST'])
