@@ -8,6 +8,10 @@
   <body>
     <form method="post">
 
+      {% if error_message %}
+        <p style="color: red;">{{ error_message }}</p>
+      {% endif %}
+
       <label>Username:  <input type="text" name="username"></label>
   
       <label>Password:  <input type="password" name="password"></label>

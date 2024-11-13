@@ -72,7 +72,7 @@ def login():
             user = cursor.fetchone()
             connection.close()
         except sqlite3.Error:
-            return "Invalid database request, please try again."
+            return render_template('login.html', error_message="Invalid database request, please try again.")
 
         if user:
             session["logged_in"] = True
