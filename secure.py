@@ -78,7 +78,6 @@ def login():
             session["logged_in"] = True
             return redirect(url_for("home"))
         else:
-            # Not safe! {username} is not sanitized and can be used for XSS
             return render_template('login.html', error_message="Invalid login, please try again.")
     return render_template('login.html')
 
