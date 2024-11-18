@@ -91,7 +91,9 @@ def logout():
 @app.route('/')
 @login_required
 def home():
-    return render_template('home.html', username=username)
+    garage_door_status = not button.is_pressed
+
+    return render_template('home.html', username=username, garage_door_status=garage_door_status)
 
 
 @app.route('/button/open', methods=['GET', 'POST'])

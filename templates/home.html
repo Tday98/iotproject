@@ -5,26 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Title</title>
 </head>
-<body style="width: 960px; margin: 0 auto;">
+<body style="width:device-width; margin: 0 auto;">
     <h1>Garage Door Opener!</h1>
     <h2>Welcome {{ username }}</h2>
 
+    {% if garage_door_status %}
     <form action="/button/open" method="POST">
         <button type="submit" style="background-color: #04AA6D">Open</button>
     </form>
     <br>
+    <br>
+    {% else %}
     <form action="/button/close" method="POST">
         <button type="submit" style="background-color: #f44336">Close</button>
     </form>
     <br>
+    <br>
+    {% endif %}
     <form action="/button/status" method="POST">
         <button type="submit" style="background-color: #00308F">Garage Status</button>
     </form>
     <br>
+    <br>
     <form action="/button/shutdown" method="POST">
         <button type="submit" style="background-color: #555555">Shut Down</button>
     </form>
-
+    <br>
+    <br>
     <form action="/logout" method="get">
         <button type="submit">Logout</button>
     </form>
